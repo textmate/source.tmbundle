@@ -243,7 +243,12 @@ class Block
   attr_accessor :type,:text,:pre_indent,:post_indent,:first_post_indent
   
   # matches any comment, note depdendence on $prefix
-  @@re_comment = Regexp.new("^(\\s*)#{$prefix}(\\s*)")
+  # This should match any whitespace after the prefix but before the comment
+  # text begins. However, it should not match a newline after the prefix (occurs
+  # when there is an empty comment line), and it never needs to match tabs
+  # because we always call detabify below. Therefor it only needs to match
+  # spaces after the prefix.
+  @@re_comment = Regexp.new("^(\\s*)#{$prefix}( *)")
   # matches an rdoc list item.
   @@re_rdoc_list_item = /^(\s*(?:\*\s|\d\.\s|\[.+\]\s|\S+::\s))/
   
