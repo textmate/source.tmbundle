@@ -318,7 +318,7 @@ class Block
             inblock = false
             nextline = iola.peek#            p "!! #{nextline}"
             if nextline && nextline =~ @@re_comment && 
-              nextline.length > pre.length+post.length+$prefix.length
+              (nextline.length-1) > pre.length+post.length+$prefix.length
               text = nextline[pre.length+post.length+$prefix.length..-1].chomp
               pre = $1
               post = $2
