@@ -120,24 +120,23 @@
 # With appropriate use of -r and -p RubyWrap should work for any language that
 # distinguishes comments by some prefix.  Languages that use "# " should work
 # well out of the box.
-#
-# == Usage
-#
-# rubywrap.rb [<options>]
-# Options:
-#   --prefix, -p <prefix>       Use <prefix> as the comment prefix.
-#   --shortthreshold -s <n>     Lines of length <= n are single line blocks.
-#   --cols, -c <n>              How many columns to wrap to (default: 78)
-#   --tabsize, -t <n>           How many spaces a tab is (default: 2)
-#   --no-rdoc-style, -n         Do not use RDoc conventions.
-#   --retabify, -r              Retabify output.
-#   --help, -h                  Display this help.
-#   --doc, -d                   Display full documentation.
-# Reads commented code from stdin and outputs wrapped commented code to
-# stdout.
-#
 
-require 'rdoc/usage'
+$usage = <<-EOS
+rubywrap.rb [<options>]
+Options:
+  --prefix, -p <prefix>       Use <prefix> as the comment prefix.
+  --shortthreshold -s <n>     Lines of length <= n are single line blocks.
+  --cols, -c <n>              How many columns to wrap to (default: 78)
+  --tabsize, -t <n>           How many spaces a tab is (default: 2)
+  --no-rdoc-style, -n         Do not use RDoc conventions.
+  --retabify, -r              Retabify output.
+  --help, -h                  Display this help.
+  --doc, -d                   Display full documentation.
+
+Reads commented code from stdin and outputs wrapped commented code to
+stdout.
+EOS
+
 require 'getoptlong'
 
 opts = GetoptLong.new(
@@ -172,13 +171,13 @@ opts.each do |opt,arg|
   when "--retabify"
     $retabify = true
   when "--help"
-    RDoc::usage("Usage")
+    print $usage; exit
   when "--doc"
-    RDoc::usage
+    print $usage; exit
   end
 end
 if ARGV.length != 0
-  RDoc::usage
+  print $usage; exit
 end
 
 # Add detabify, entabify to String class.
