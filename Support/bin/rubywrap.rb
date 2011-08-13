@@ -51,7 +51,7 @@
 #  # This a header...
 #  # ... it will not absorb this line.
 #  #
-#  #     This block of text will be left alone by default as it represents 
+#  #     This block of text will be left alone by default as it represents
 #  #     a verbatim block of RDoc text.  If the -n option is given then
 #  #     RDoc-Style is off then it will be correctly wrapped, maintaining it's
 #  #     indentation level.  In any case it will not abosrb...
@@ -203,7 +203,7 @@ end
 # == Description
 # Simple class which allows reading lines and peeking at the next line.
 #
-class IOLookAhead 
+class IOLookAhead
   # Create an IOLookAhead (iola) from an IO object.
   def initialize(io)
     @io = io
@@ -215,7 +215,7 @@ class IOLookAhead
     @buffer ||= @io.gets
     @buffer
   end
-  
+
   # Returns the next line and advances. Returns nil on eof.
   def pop
     ret = peek
@@ -230,17 +230,17 @@ end
 # A block is a block of text that should be wrapped.  It has several
 # attributes:
 #
-# _type_::              :comment, :verbatim, or :code, :code is written 
-#                       directly, :comment is wrapped, :verbatim has a 
+# _type_::              :comment, :verbatim, or :code, :code is written
+#                       directly, :comment is wrapped, :verbatim has a
 #                       properly indent prefix prepended but that's it.
 # _pre_indent_::        how many spaces to put before $prefix
 # _post_indent_::       how many spaecs to put after $prefix and before text
-# _first_post_indent_:: how many spaces to put after $prefix for the first 
+# _first_post_indent_:: how many spaces to put after $prefix for the first
 #                       line
 #
 class Block
   attr_accessor :type,:text,:pre_indent,:post_indent,:first_post_indent
-  
+
   # matches any comment, note depdendence on $prefix
   # This should match any whitespace after the prefix but before the comment
   # text begins. However, it should not match a newline after the prefix (occurs
@@ -250,7 +250,7 @@ class Block
   @@re_comment = Regexp.new("^(\\s*)#{$prefix}( *)")
   # matches an rdoc list item.
   @@re_rdoc_list_item = /^(\s*(?:\*\s|\d\.\s|\[.+\]\s|\S+::\s))/
-  
+
   # don't call this - use Block.from_iola instead.
   def initialize
     @type = :unknown
@@ -259,7 +259,7 @@ class Block
     @post_indent = 0
     @first_post_indent = 0
   end
-  
+
   # Creates a block from a IOLookAhead object.
   def self.from_iola(iola)
     block = Block.new
@@ -289,8 +289,8 @@ class Block
       secondline = iola.peek
       return block if ! secondline
       if (! $rdocstyle || post.length == 0) &&
-          firstline.length > $shorttheshold && 
-          secondline.detabify =~ @@re_comment 
+          firstline.length > $shorttheshold &&
+          secondline.detabify =~ @@re_comment
         secondline.detabify!
         # We still may not be part of the block.  If our pre_indent is
         # different then we're a new block.  For post_indent we use the
@@ -304,7 +304,7 @@ class Block
         text = secondline[pre.length+post.length+$prefix.length..-1].chomp
         if pre.length == block.pre_indent &&
             text.length > 0 &&
-            ((post.length == block.first_post_indent || 
+            ((post.length == block.first_post_indent ||
               (rdoc_list_prefix && post.length == block.post_indent)) ||
               (post.length > block.first_post_indent &&
                 (firstline[0..post.length] =~ /\S\s+$/))) &&
@@ -316,12 +316,12 @@ class Block
           while inblock
             inblock = false
             nextline = iola.peek#            p "!! #{nextline}"
-            if nextline && nextline =~ @@re_comment && 
+            if nextline && nextline =~ @@re_comment &&
               (nextline.length-1) > pre.length+post.length+$prefix.length
               text = nextline[pre.length+post.length+$prefix.length..-1].chomp
               pre = $1
               post = $2
-              if (pre.length == block.pre_indent) && 
+              if (pre.length == block.pre_indent) &&
                   (post.length == block.post_indent) &&
                   (! $rdocstyle || text !~ @@re_rdoc_list_item)
                 iola.pop
@@ -339,7 +339,7 @@ class Block
     end
     block
   end
-  
+
   # Writes the block to _io_.
   def write(io)
     if type == :code
@@ -358,7 +358,7 @@ class Block
         width = $cols - pre_indent - $prefix.length - cur_post_indent
         if first_word.length > width
           STDERR.print "Warning: #{first_word} is too long to fit in column."
-          output = " "*pre_indent + $prefix + " "*cur_post_indent + 
+          output = " "*pre_indent + $prefix + " "*cur_post_indent +
             first_word + "\n"
           output.entabify! if $retabify
           print output
@@ -387,18 +387,18 @@ class Block
     end
     @text += text
   end
-  
+
   # remove the first n characters from the block
   def trim(n)
     @text = @text[n..-1] || ""
   end
-  
+
   # Returns the first word of the text.
   def first_word
     text =~ /^.*?\S.*?/
     $&
   end
-  
+
   # Returns the words up to the given length
   def words_to(n)
     re = Regexp.new("^(.{0,#{n}})(?:\s|$)")
