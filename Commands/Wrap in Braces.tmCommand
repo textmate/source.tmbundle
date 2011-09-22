@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby -wKU
+
+def indent(text)
+	text.split(/\n/).collect { |str| $&amp; if str =~ /^\s*/ }.reject { |e| e == "" }.min { |a, b| a.length &lt;=&gt; b.length }
+end
+
+def tab
+	ENV['TM_SOFT_TABS'] == 'YES' ? ' ' * ENV['TM_TAB_SIZE'].to_i : "\t"
+end
+
+code = STDIN.read
+
+if code =~ /\n/ then
+  STDOUT &lt;&lt; indent(code) &lt;&lt; "{\n"
+  STDOUT &lt;&lt; code.gsub(/^(?=.)/, "#{tab}")
+  STDOUT &lt;&lt; indent(code) &lt;&lt; "}\n"
+else
+  STDOUT &lt;&lt; "{#{code}}"
+end
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>{</string>
+	<key>name</key>
+	<string>Wrap in Braces</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>source &amp; dyn.selection.continuous</string>
+	<key>uuid</key>
+	<string>52DA9EF9-6D1A-4E55-BFB9-BCB85C250715</string>
+</dict>
+</plist>
