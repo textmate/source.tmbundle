@@ -5,16 +5,12 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/bin/sh
+	<string>#!/bin/bash
 
-if ! test -x "$TM_FILEPATH"; then
-    read -n 2 FIRST2CHARS
-    if test "$FIRST2CHARS" = "#!"; then
-        chmod a+x "$TM_FILEPATH"
-        echo "‘${TM_DISPLAYNAME}’ is now executable."
-    fi
-fi
-</string>
+if [[ ! -x "$TM_FILEPATH" &amp;&amp; $(head -c2 "$TM_FILEPATH") == '#!' ]]; then
+	chmod a+x "$TM_FILEPATH"
+	echo "‘${TM_DISPLAYNAME}’ is now executable."
+fi</string>
 	<key>eventSpecifier</key>
 	<string>event.document.did_save</string>
 	<key>hideFromUser</key>
