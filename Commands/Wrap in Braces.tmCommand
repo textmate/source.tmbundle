@@ -6,6 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby -wKU
+require "pp"
 
 def indent(text)
 	text.split(/\n/).collect { |str| $&amp; if str =~ /^\s*/ }.reject { |e| e == "" }.min { |a, b| a.length &lt;=&gt; b.length }
@@ -17,7 +18,7 @@ end
 
 code = STDIN.read
 
-if code =~ /\n/ then
+if code =~ /\n/ &amp;&amp; ENV['TM_INPUT_START_LINE_INDEX'].to_i == 0 then
   STDOUT &lt;&lt; indent(code) &lt;&lt; "{\n"
   STDOUT &lt;&lt; code.gsub(/^(?=.)/, "#{tab}")
   STDOUT &lt;&lt; indent(code) &lt;&lt; "}\n"
@@ -27,15 +28,23 @@ end
 </string>
 	<key>input</key>
 	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>{</string>
 	<key>name</key>
 	<string>Wrap in Braces</string>
-	<key>output</key>
-	<string>replaceSelectedText</string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
 	<key>scope</key>
 	<string>source &amp; dyn.selection.continuous</string>
 	<key>uuid</key>
 	<string>52DA9EF9-6D1A-4E55-BFB9-BCB85C250715</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
