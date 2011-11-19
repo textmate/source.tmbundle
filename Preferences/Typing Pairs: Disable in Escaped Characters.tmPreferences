@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Typing Pairs: Disable in Escaped Characters</string>
 	<key>scope</key>
-	<string>L:constant.character.escape &amp; R:constant.character.escape</string>
+	<string>B:constant.character.escape - dyn.selection</string>
 	<key>settings</key>
 	<dict>
 		<key>smartTypingPairs</key>
