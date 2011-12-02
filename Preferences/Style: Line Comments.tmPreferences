@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Style: Line Comments</string>
+	<key>scope</key>
+	<string>comment.line</string>
+	<key>settings</key>
+	<dict>
+		<key>softWrap</key>
+		<true/>
+	</dict>
+	<key>uuid</key>
+	<string>89C1D252-9986-4F50-BAF4-B7EABE8F8CD0</string>
+</dict>
+</plist>
