@@ -11,8 +11,6 @@ if [[ ! -x "$TM_FILEPATH" &amp;&amp; $(head -c2 "$TM_FILEPATH") == '#!' ]]; then
 	chmod a+x "$TM_FILEPATH"
 	echo "‘${TM_DISPLAYNAME}’ is now executable."
 fi</string>
-	<key>eventSpecifier</key>
-	<string>event.document.did_save</string>
 	<key>hideFromUser</key>
 	<true/>
 	<key>input</key>
@@ -29,6 +27,8 @@ fi</string>
 	<string>toolTip</string>
 	<key>scope</key>
 	<string>source.ruby, source.perl, source.python</string>
+	<key>semanticClass</key>
+	<string>callback.document.did-save</string>
 	<key>uuid</key>
 	<string>0D7C6CA2-5A3A-4FBE-9CE6-9C23BA87CCA0</string>
 	<key>version</key>
