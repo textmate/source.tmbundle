@@ -114,6 +114,15 @@
 		<string>A8D04E65-97FA-4DE0-85A5-AC426B6184C6</string>
 		<string>4F3DE420-8203-4C57-835D-4C69AEE85B37</string>
 	</array>
+	<key>require</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Bundle Support</string>
+			<key>uuid</key>
+			<string>0BB1F01A-4F0A-475A-ACDD-0F5578F2EFC3</string>
+		</dict>
+	</array>
 	<key>uuid</key>
 	<string>4F45FDC0-62CA-4786-9134-8BC7C1F5606F</string>
 </dict>
