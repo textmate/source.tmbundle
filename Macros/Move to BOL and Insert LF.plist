@@ -6,7 +6,11 @@
 	<array>
 		<dict>
 			<key>command</key>
-			<string>moveUp:</string>
+			<string>moveToBeginningOfLine:</string>
+		</dict>
+		<dict>
+			<key>command</key>
+			<string>insertNewline:</string>
 		</dict>
 		<dict>
 			<key>command</key>
@@ -14,7 +18,7 @@
 		</dict>
 		<dict>
 			<key>command</key>
-			<string>insertNewline:</string>
+			<string>moveUp:</string>
 		</dict>
 	</array>
 	<key>keyEquivalent</key>
