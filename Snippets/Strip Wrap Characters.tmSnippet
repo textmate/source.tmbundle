@@ -9,7 +9,7 @@
 	<key>name</key>
 	<string>Strip Wrap Characters</string>
 	<key>scope</key>
-	<string>dyn.selection</string>
+	<string>dyn.selection.continuous</string>
 	<key>uuid</key>
 	<string>879EF993-001F-444A-A803-1225C83B980A</string>
 </dict>
