@@ -43,7 +43,7 @@ text    = STDIN.read
 default = nil  # the comment we will insert, if none are removed
 
 # maintain selection
-if text == ENV["TM_SELECTED_TEXT"]
+if ENV.has_key?("TM_SELECTED_TEXT")
   $selected = true
   print "${0:"
   at_exit { print "}" }
