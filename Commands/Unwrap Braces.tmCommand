@@ -28,7 +28,7 @@ end
 	<key>output</key>
 	<string>replaceSelectedText</string>
 	<key>scope</key>
-	<string>source &amp; dyn.selection.continuous</string>
+	<string>source &amp; dyn.selection &amp; -dyn.caret.mixed</string>
 	<key>uuid</key>
 	<string>DD42B10A-E753-4E08-A998-5C2E7C2D0CC2</string>
 </dict>
