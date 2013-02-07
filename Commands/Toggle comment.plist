@@ -154,17 +154,27 @@ when "block" # apply comment around selection
   end
 end
 </string>
+	<key>disableOutputAutoIndent</key>
+	<true/>
 	<key>fallbackInput</key>
 	<string>line</string>
 	<key>input</key>
 	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>@/</string>
 	<key>name</key>
 	<string>Comment Line / Selection</string>
-	<key>output</key>
-	<string>insertAsSnippet</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>snippet</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
 	<key>uuid</key>
 	<string>73EAE95D-A09C-4FC2-B4E3-42505678B57E</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
