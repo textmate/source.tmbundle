@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Typing Pairs: String and Comment</string>
 	<key>scope</key>
-	<string>string.quoted.double, comment, string.unquoted.heredoc</string>
+	<string>string.quoted.double - dyn.selection, comment, string.unquoted.heredoc</string>
 	<key>settings</key>
 	<dict>
 		<key>smartTypingPairs</key>
