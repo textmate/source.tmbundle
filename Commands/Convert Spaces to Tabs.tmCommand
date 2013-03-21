@@ -5,8 +5,10 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/bin/sh
-unexpand -t$TM_TAB_SIZE
+	<string>#!/usr/bin/env bash
+[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] && . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
+
+perl -pe '1 while s/\G $ENV{'$TM_TAB_SIZE'}/\t/gc'
 </string>
 	<key>input</key>
 	<string>selection</string>
