@@ -11,7 +11,7 @@
 		<key>indentedSoftWrap</key>
 		<dict>
 			<key>format</key>
-			<string>${0/\S/ /g}</string>
+			<string>${0/(\s*)(.{,4}).*/$1${2/./ /g}/}</string>
 			<key>match</key>
 			<string>.*(`)\s+</string>
 		</dict>
