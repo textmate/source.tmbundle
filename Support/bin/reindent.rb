@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
 #
 # ReIndent v0.1
 # By Sune Foldager <cryo at cyanite.org>
