@@ -22,7 +22,7 @@ flags = %Q{-p "#{cstring}"}
 flags += " --retabify" unless ENV["TM_SOFT_TABS"] == "YES"
 flags += " -c #{ENV['TM_COLUMNS'].nil? ? 80 : ENV['TM_COLUMNS']}"
 
-command = "ruby #{e_sh(ENV["TM_BUNDLE_SUPPORT"])}/bin/rubywrap.rb #{flags}"
+command = "/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby #{e_sh(ENV["TM_BUNDLE_SUPPORT"])}/bin/rubywrap.rb #{flags}"
 text    = open("| #{command}", "r+") do |wrapper|
   wrapper &lt;&lt; ctext
   wrapper.close_write
