@@ -6,127 +6,67 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
-#
-# Assignment block tidier, version 0.1.
-#
-# Copyright Chris Poirier 2006.
-# Licensed under the Academic Free License version 3.0.
-#
-# This script can be used as a command for TextMate to align all 
-# of the equal signs within a block of text.  When using it with
-# TextMate, set the command input to "Selected Text" or "Document",
-# and the output to "Replace Selected Text".  Map it to a key 
-# equivalent, and any time you want to tidy up a block, either 
-# select it, or put your cursor somewhere within it; then hit the
-# key equivalent.  Voila.
-#
-# Note that this is the first version of the script, and it hasn't
-# been heavily tested.  You might encounter a bug or two. 
-#
-# Per the license, use of this script is ENTIRELY at your own risk.
-# See the license for full details (they override anything I've 
-# said here).
+# encoding: UTF-8
+# Copyright © 2009 Caio Chassot
+# Licensed under the WTFPL
+# Updated for Ruby 1.8 compatibility by Elia Schito
 
-lines = STDIN.readlines()
-selected_text = ENV.member?("TM_SELECTED_TEXT")
-
-relevant_line_pattern = /^[^=]+[^-+&lt;&gt;=!%\/|&amp;*^]=(?!=|~)/
-column_search_pattern = /[\t ]*=/
-
-
-#
-# If called on a selection, every assignment statement
-# is in the block.  If called on the document, we start on the 
-# current line and look up and down for the start and end of the
-# block.
-
-if selected_text then
-   block_top    = 1
-   block_bottom = lines.length
-else
- 
-   #
-   # We start looking on the current line.  However, if the
-   # current line doesn't match the pattern, we may be just
-   # after or just before a block, and we should check.  If
-   # neither, we are done.
-
-   start_on      = ENV["TM_LINE_NUMBER"].to_i
-   block_top     = lines.length + 1
-   block_bottom  = 0
-   search_top    = 1
-   search_bottom = lines.length
-   search_failed = false
-
-   if lines[start_on - 1] !~ relevant_line_pattern then
-      if lines[start_on - 2] =~ relevant_line_pattern then
-         search_bottom = start_on = start_on - 1
-      elsif lines[start_on] =~ relevant_line_pattern then
-         search_top = start_on = start_on
-      else
-         search_failed = true
-      end 
-   end
-
-   #
-   # Now with the search boundaries set, start looking for
-   # the block top and bottom.
-   
-   unless search_failed
-      start_on.downto(search_top) do |number|
-         if lines[number-1] =~ relevant_line_pattern then
-            block_top = number
-         else
-            break
-         end
-      end
-      
-      start_on.upto(search_bottom) do |number|
-         if lines[number-1] =~ relevant_line_pattern then
-            block_bottom = number
-         else
-            break
-         end
-      end
-   end
+def alternation(*s)
+  s.map(&amp;Regexp.method(:escape)).join("|")
 end
 
+# All input is read here.
+LINES                = $stdin.readlines
+IS_SELECTION         = ENV.key?("TM_SELECTED_TEXT")
+CURRENT_LINE         = ENV["TM_LINE_NUMBER"].to_i.pred
+CENTER_COLUMN        = ENV['ALIGN_ASSIGNMENTS_CENTER_COLUMN']
 
+
+# Magic happens here.
+# ASSIGNMENT_OPERATORS: There's love for C, ruby, perl, python, javascript, java, even pascal. Hash/Dict assignment included too.
+# TROUBLEMAKERS: non-assignment operators that could match as assigment.
+ASSIGNMENT_OPERATORS = %w( = -= += /= //= %= *= **= ^= |= &amp;= ||= &amp;&amp;= &lt;&lt;= &gt;&gt;= &gt;&gt;&gt;= .= x= := ::= =&gt; )
+TROUBLEMAKERS        = %w( &lt;= &gt;= &lt;=&gt; == === != =~ )
+TROUBLEMAKERS_BEFORE = TROUBLEMAKERS.map { |s| s[/^(.+)=/, 1] }.compact.uniq
+TROUBLEMAKERS_AFTER  = TROUBLEMAKERS.map { |s| s[/=(.+)$/, 1] }.compact.uniq
+COMMENT_PATTERN      = /^\s*#/
+
+# We'll keep the original Ruby 1.9 regexp as a reference:
 #
-# Now, iterate over the block and find the best column number
-# for the = sign.  The pattern will tell us the position of the
-# first bit of whitespace before the equal sign.  We put the
-# equals sign to the right of the furthest-right one.  Note that
-# we cannot assume every line in the block is relevant.
-
-best_column = 0
-block_top.upto(block_bottom) do |number|
-   line = lines[number - 1]
-   if line =~ relevant_line_pattern then
-      m = column_search_pattern.match(line)
-      best_column = m.begin(0) if m.begin(0) &gt; best_column
-   end
-end
-
-   
+#     RX_ASSIGNMENT_LINE   = %r[
+#       (^.*?)                                          # capture 1 — everything before assignment
+#       ( \s*                                           # capture 2 — assignment operator with surrounding spaces
+#         (?&lt;!  #{alternation(*TROUBLEMAKERS_BEFORE)} )
+#         ( (?: #{alternation(*ASSIGNMENT_OPERATORS)} ) # capture 3 — assignment operator
+#         | :(?!\w|:)                                 ) #   special handling for the ':' assignment op (yaml, javascript, etc)
+#         (?!   #{alternation(*TROUBLEMAKERS_AFTER )} )
+#         \s* )
+#     ]x
 #
-# Reformat the block.  Again, we cannot assume all lines in the 
-# block are relevant.
+RX_ASSIGNMENT_LINE   = /(^.*?)(\s*[^#{TROUBLEMAKERS_BEFORE.join('')}]((?:#{alternation(*ASSIGNMENT_OPERATORS)})|:(?!\w|:))[^#{TROUBLEMAKERS_AFTER.join ''}]\s*)/
 
-block_top.upto(block_bottom) do |number|
-   if lines[number-1] =~ relevant_line_pattern then
-      before, after = lines[number-1].split(/[\t ]*=[\t ]*/, 2)
-      lines[number-1] = [before.ljust(best_column), after].join(after[0,1] == '&gt;' ? " =" : " = ")
-   end
+l0, lf = [0, LINES.length.pred]
+l0, lf = begin                                                                                                          # try to look up assignment block since we're not in a selection
+  ix0  = ixf = %w[ to_i succ pred ].map { |m| CURRENT_LINE.send(m) }.find { |ix| LINES[ix] =~ RX_ASSIGNMENT_LINE }.to_i # assignment must exist in either this line, next, or previous
+  ix0  = ix0.pred while ix0 &gt; l0 &amp;&amp; LINES[ix0.pred] =~ RX_ASSIGNMENT_LINE                                               # extend scope to assignments immediately above
+  ixf  = ixf.succ while ix0 &lt; lf &amp;&amp; LINES[ixf.succ] =~ RX_ASSIGNMENT_LINE                                               # extend scope to assignments immediately below
+  [ix0, ixf]
+end unless IS_SELECTION
+
+match_lines  = LINES[l0..lf].map { |s| [s.match(RX_ASSIGNMENT_LINE), s] }.select { |m, s| m and s !~ COMMENT_PATTERN }
+
+len_leftside = match_lines.map   { |m, s| m.begin(2)  }.compact.max
+len_operator = match_lines.map   { |m, s| m[3].length if m[3] }.compact.max
+
+match_lines.each do |m, s|
+  if m[3] == ':' and !CENTER_COLUMN
+    # +1 is for an element less in the array
+    s.replace [(m[1] + m[2].strip).ljust(len_leftside+len_operator+1), m.post_match].join(' ')
+  else
+    s.replace [m[1].to_s.ljust(len_leftside), m[3].to_s.rjust(len_operator), m.post_match].join(' ')
+  end
 end
-
-
-#
-# Output the replacement text
-
-lines.each do |line|
-   puts line
-end
+puts LINES
 </string>
 	<key>input</key>
 	<string>selection</string>
