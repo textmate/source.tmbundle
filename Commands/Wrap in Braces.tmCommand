@@ -19,9 +19,15 @@ end
 code = STDIN.read
 
 if code =~ /\n/ &amp;&amp; ENV['TM_INPUT_START_LINE_INDEX'].to_i == 0 then
-  STDOUT &lt;&lt; indent(code) &lt;&lt; "{\n"
-  STDOUT &lt;&lt; code.gsub(/^(?=.)/, "#{tab}")
-  STDOUT &lt;&lt; indent(code) &lt;&lt; "}\n"
+  leading = indent(code)
+  if code =~ /\n.*\n/
+    STDOUT &lt;&lt; leading &lt;&lt; "{\n"
+    STDOUT &lt;&lt; code.gsub(/^(?=.)/, tab)
+    STDOUT &lt;&lt; leading &lt;&lt; "}\n"
+  else
+    leading.slice!(tab)
+    STDOUT &lt;&lt; leading &lt;&lt; "{\n" &lt;&lt; code &lt;&lt; leading &lt;&lt; "}\n"
+  end
 else
   STDOUT &lt;&lt; "{#{code}}"
 end

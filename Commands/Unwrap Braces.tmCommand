@@ -14,7 +14,9 @@ end
 code = STDIN.read
 
 if code =~ /\A\s*\{\s*\n(.*\n)\s*\}\s*\z/m then
-  STDOUT &lt;&lt; $1.gsub(/^#{tab}/, '')
+  code = $1
+  code.gsub!(/^#{tab}/, '') if code =~ /\n.*\n/
+  STDOUT &lt;&lt; code
 else
   STDOUT &lt;&lt; '}'
 end
