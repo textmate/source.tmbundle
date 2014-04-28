@@ -25,7 +25,8 @@ require "#{ENV["TM_SUPPORT_PATH"]}/lib/escape"
 def out(*args)
   print( *args.map do |arg|
     escaped = e_sn(arg)
-    $selected ? escaped.gsub("}", "\\}") : escaped.sub("\0", "${0}")
+    escaped = $selected ? escaped.gsub("}", "\\}") : escaped.sub("\0", "${0}")
+    escaped.gsub(/[\t ]+$/, '')
   end )
 end
 

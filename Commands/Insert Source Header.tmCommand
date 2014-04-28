@@ -55,7 +55,7 @@ print %Q{#{line_comment}#{comment_start}
 #{line_comment}#{indent}Created by #{username} on #{date}.
 #{line_comment}#{indent}Copyright #{`date +%Y`.chomp} #{copyright_holder}. All rights reserved.
 #{line_comment}#{comment_end}
-$0}
+$0}.gsub(/[\t ]+$/, '')
 </string>
 	<key>input</key>
 	<string>none</string>
