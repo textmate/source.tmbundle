@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
+	<string>#!/usr/bin/env ruby18
 
 $LOAD_PATH &lt;&lt; "#{ENV["TM_SUPPORT_PATH"]}/lib"
 require "escape"
@@ -22,7 +22,7 @@ flags = %Q{-p "#{cstring}"}
 flags += " --retabify" unless ENV["TM_SOFT_TABS"] == "YES"
 flags += " -c #{ENV['TM_COLUMNS'].nil? ? 80 : ENV['TM_COLUMNS']}"
 
-command = "/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby #{e_sh(ENV["TM_BUNDLE_SUPPORT"])}/bin/rubywrap.rb #{flags}"
+command = "ruby18 #{e_sh(ENV["TM_BUNDLE_SUPPORT"])}/bin/rubywrap.rb #{flags}"
 text    = open("| #{command}", "r+") do |wrapper|
   wrapper &lt;&lt; ctext
   wrapper.close_write
