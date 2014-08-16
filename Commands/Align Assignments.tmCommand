@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
+	<string>#!/usr/bin/ruby
 #
 # Assignment block tidier, version 0.1.
 #
@@ -130,13 +130,21 @@ end
 </string>
 	<key>input</key>
 	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>~@]</string>
 	<key>name</key>
 	<string>Align Assignments</string>
-	<key>output</key>
-	<string>replaceSelectedText</string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
 	<key>uuid</key>
 	<string>FCBE2215-19CA-470A-8D92-BB0D00491D62</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
