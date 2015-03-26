@@ -21,6 +21,10 @@ end
 start, stop = find_markers
 input = STDIN.read.to_s
 
+if ENV['TM_SELECTION'] =~ /&amp;/
+  TextMate.exit_replace_text(input.gsub(/.+/, "#{start}\\&amp;#{stop}"))
+end
+
 if input =~ /\n/
   start &lt;&lt; "\n"
   stop  &lt;&lt; "\n"
