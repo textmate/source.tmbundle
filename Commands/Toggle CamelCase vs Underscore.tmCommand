@@ -33,19 +33,19 @@ def camelcase_to_pascalcase(word)
 	word.gsub(/^\w{1}/) {|c| c.upcase}
 end
 
-word = $stdin.gets
+def toggle_case(word)
+  case word
+  when /^[A-Z]{1}/
+    pascalcase_to_snakecase(word)
+  when /_/
+    snakecase_to_camelcase(word)
+  else
+    camelcase_to_pascalcase(word)
+  end
+end
 
-TextMate.exit_discard if word.nil?
-
-is_pascal = word.match(/^[A-Z]{1}/) ? true : false
-is_snake = word.match(/_/) ? true : false
-
-if is_pascal then
-	print pascalcase_to_snakecase(word)
-elsif is_snake then
-	print snakecase_to_camelcase(word)
-else
-	print camelcase_to_pascalcase(word) 
+while word = $stdin.gets
+  print toggle_case(word)
 end
 </string>
 	<key>fallbackInput</key>
