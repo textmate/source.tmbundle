@@ -48,7 +48,7 @@ print e_sn(text)
 	<key>outputLocation</key>
 	<string>replaceInput</string>
 	<key>scope</key>
-	<string>comment.line</string>
+	<string>punctuation.whitespace.comment.leading | comment.line</string>
 	<key>uuid</key>
 	<string>F20AD964-3C68-4940-91B1-8A99B8E2A375</string>
 	<key>version</key>
