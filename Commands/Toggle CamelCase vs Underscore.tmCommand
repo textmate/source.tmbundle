@@ -5,9 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env ruby18
-
-require ENV['TM_SUPPORT_PATH'] + '/lib/exit_codes'
+	<string>#!/usr/bin/env ruby20
 
 # Test Cases
 # 
@@ -35,12 +33,12 @@ end
 
 def toggle_case(word)
   case word
-  when /^[A-Z]{1}/
-    pascalcase_to_snakecase(word)
-  when /_/
-    snakecase_to_camelcase(word)
-  else
-    camelcase_to_pascalcase(word)
+  when /^([^A-Za-z]?+)(?=[A-Z])/
+    $1 + pascalcase_to_snakecase($')
+  when /^([^A-Za-z]?+)(?=.*_)/
+    $1 + snakecase_to_camelcase($')
+  when /^([^A-Za-z]?+)(?=[a-z])/
+    $1 + camelcase_to_pascalcase($')
   end
 end
 
