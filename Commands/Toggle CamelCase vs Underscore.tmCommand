@@ -33,11 +33,11 @@ end
 
 def toggle_case(word)
   case word
-  when /^([^A-Za-z]?+)(?=[A-Z])/
+  when /^([^A-Za-z]*+)(?=[A-Z])/
     $1 + pascalcase_to_snakecase($')
-  when /^([^A-Za-z]?+)(?=.*_)/
+  when /^([^A-Za-z]*+)(?=.+_)/
     $1 + snakecase_to_camelcase($')
-  when /^([^A-Za-z]?+)(?=[a-z])/
+  when /^([^A-Za-z]*+)(?=[a-z])/
     $1 + camelcase_to_pascalcase($')
   else
     word
