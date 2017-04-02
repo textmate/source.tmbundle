@@ -144,7 +144,7 @@ when "block" # apply comment around selection
   elsif default[:no_indent]
     out default[:start], text, default[:end]
   else
-    lines = text.to_a
+    lines = Array(text)
     if lines.empty?
       out default[:start], default[:end]
     else
