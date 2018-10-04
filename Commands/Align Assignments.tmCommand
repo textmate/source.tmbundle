@@ -9,62 +9,94 @@
 
 IS_SELECTION = ENV.key?('TM_SELECTED_TEXT')
 CURRENT_LINE = ENV['TM_LINE_NUMBER'].to_i.pred
+TAB_SIZE     = (ENV['TM_TAB_SIZE'] || '2').to_i
 lines        = STDIN.readlines
 
 # List of operators that determine if a line is or is not an assignment
-INCLUDE = %w( -= += /= //= %= *= **= ^= |= &amp;= ||= &amp;&amp;= &lt;&lt;= &gt;&gt;= &gt;&gt;&gt;= .= x= := ::= =&gt; = )
-EXCLUDE = %w( &lt;= &gt;= &lt;=&gt; == === != =~ )
+INCLUDE_OPS = %w( -= += /= //= %= *= **= ^= |= &amp;= ||= &amp;&amp;= &lt;&lt;= &gt;&gt;= &gt;&gt;&gt;= .= x= := ::= =&gt; = )
+EXCLUDE_OPS = %w( &lt;= &gt;= &lt;=&gt; == === != =~ )
 
-include = Regexp.new(INCLUDE.map { |op| Regexp.escape(op) }.join('|'))
-exclude = Regexp.new(EXCLUDE.map { |op| Regexp.escape(op) }.join('|'))
+INCLUDE = Regexp.new(INCLUDE_OPS.map { |op| Regexp.escape(op) }.join('|'))
+EXCLUDE = Regexp.new(EXCLUDE_OPS.map { |op| Regexp.escape(op) }.join('|'))
 
-define_method(:matches?) do |line, indent = nil|
-  include_match = include.match(line)
-  exclude_match = exclude.match(line)
-  include_match &amp;&amp; (exclude_match.nil? || include_match.begin(0) &lt; exclude_match.begin(0)) &amp;&amp; (indent.nil? || indent == indent_size(line))
-end
+# Use look-behind to have padding inserted *after* the (colon) operator
+FALLBACK_INCLUDE = /(?&lt;=\S:\s)/
 
-# Return the line’s indent taking tab stops into account
-def indent_size(line, tab_size = (ENV['TM_TAB_SIZE'] || '2').to_i)
-  size = 0
-  $&amp;.scan(/./) do |ch|
-    size += ch == ' ' ? 1 : (tab_size - (size % tab_size))
-  end if line =~ /^[ \t]*/
-  size
-end
-
-# This function expects all lines to be assignments and will align them using the split pattern
-def align_lines(lines, split_pattern)
-  partitioned = lines.map do |line|
-    line.partition(split_pattern)
+class AlignHelper
+  def self.try(lines, include, exclude, first)
+    helper = AlignHelper.new(lines, include, exclude)
+    line_numbers = helper.find_range(first)
+    line_numbers.empty? ? nil : helper.align_lines(line_numbers)
   end
 
-  left_width = partitioned.map { |s, _, _| s.rstrip.size }.max
-  op_width   = partitioned.map { |_, s, _| s.size }.max
+  def initialize(lines, include, exclude)
+    @lines   = lines
+    @include = include
+    @exclude = exclude
+  end
 
-  partitioned.map do |left, op, right|
-    left.rstrip.ljust(left_width+1) + op.rjust(op_width) + right
+  def find_range(first)
+    if first.nil?
+      (0..@lines.size).select { |i| matches?(i) }
+    elsif matches?(first)
+      last, indent = first, indent_size(first)
+      first -= 1 while first &gt; 0            &amp;&amp; matches?(first-1, indent)
+      last  += 1 while last+1 &lt; @lines.size &amp;&amp; matches?(last+1, indent)
+      (first..last).to_a
+    else
+      []
+    end
+  end
+
+  def align_lines(indexes, split_pattern = @include)
+    lines = indexes.map { |i| @lines[i] }
+
+    partitioned = lines.map do |line|
+      line.partition(split_pattern)
+    end
+
+    left_width = partitioned.map { |s, _, _| s.rstrip.size }.max
+    op_width   = partitioned.map { |_, s, _| s.size }.max
+
+    left_width += 1 if op_width &gt; 0
+
+    lines = partitioned.map do |left, op, right|
+      left.rstrip.ljust(left_width) + op.rjust(op_width) + ' ' + right.lstrip
+    end
+
+    res = @lines.dup
+    indexes.each { |i| res[i] = lines.shift }
+    res
+  end
+
+  private
+
+  def matches?(i, indent = nil)
+    include_match = @include &amp;&amp; @include.match(@lines[i])
+    exclude_match = @exclude &amp;&amp; @exclude.match(@lines[i])
+    include_match &amp;&amp; (exclude_match.nil? || include_match.begin(0) &lt; exclude_match.begin(0)) &amp;&amp; (indent.nil? || indent == indent_size(i))
+  end
+
+  def indent_size(i, tab_size = TAB_SIZE)
+    size = 0
+    $&amp;.scan(/./) do |ch|
+      size += ch == ' ' ? 1 : (tab_size - (size % tab_size))
+    end if @lines[i] =~ /^[ \t]*/
+    size
   end
 end
 
-line_numbers = []
+patterns = [
+  [ INCLUDE, EXCLUDE ],
+  [ FALLBACK_INCLUDE ],
+]
 
-if IS_SELECTION
-  # Work on all lines that are assignments
-  line_numbers = (0..lines.size).select { |i| matches?(lines[i]) }
-elsif matches?(lines[CURRENT_LINE])
-  # Only work on lines above/below current, as long as they are assignments and have same indent
-  first, last, indent = CURRENT_LINE, CURRENT_LINE, indent_size(lines[CURRENT_LINE])
-  first -= 1 while first &gt; 0           &amp;&amp; matches?(lines[first-1], indent)
-  last  += 1 while last+1 &lt; lines.size &amp;&amp; matches?(lines[last+1], indent)
-  line_numbers = (first..last)
+for include, exclude in patterns do
+  if new_lines = AlignHelper.try(lines, include, exclude, IS_SELECTION ? nil : CURRENT_LINE)
+    lines = new_lines
+    break
+  end
 end
-
-lines_to_align = line_numbers.map { |i| lines[i] }
-aligned_lines  = align_lines(lines_to_align, include)
-
-# Update lines array with our newly aligned lines
-line_numbers.each { |i| lines[i] = aligned_lines.shift }
 
 STDOUT &lt;&lt; lines.join
 </string>
