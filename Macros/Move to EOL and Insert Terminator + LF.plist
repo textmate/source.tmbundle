@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>commands</key>
@@ -24,7 +24,7 @@ def es(str)
 	str.to_s.gsub(/([$`\\])/, "\\\\\\1")
 end
 
-print es($stdin.read()[/^(.*?);*\s*$/, 1]) + "#{es(termchar)}$0"</string>
+print es($stdin.read()[/^(.*?)#{es(termchar)}*\s*$/, 1]) + "#{es(termchar)}$0"</string>
 				<key>fallbackInput</key>
 				<string>line</string>
 				<key>input</key>
